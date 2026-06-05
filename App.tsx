@@ -481,7 +481,7 @@ export default function App() {
           `;
 
           const prompt = `
-          Você é a "Mais", uma IA Nutricionista e Chef de Cozinha integrada ao sistema NUTRI+.
+          Você é a "Mais", uma IA Nutricionista e Chef de Cozinha integrada ao sistema Nutrimais.
           
           CONTEXTO DO PACIENTE:
           ${patientContext}
@@ -1096,7 +1096,7 @@ export default function App() {
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Atendimentos Nutricionais</span>
                   </h1>
                   <p className="text-slate-300 text-lg mb-8 leading-relaxed">
-                      O <b>NUTRI+ Pro</b> centraliza anamnese, avaliação antropométrica, planejamento alimentar e gestão de consultório em uma única plataforma inteligente. 
+                      O <b>Nutrimais Pro</b> centraliza anamnese, avaliação antropométrica, planejamento alimentar e gestão de consultório em uma única plataforma inteligente. 
                       Agora com <b>"Foco No Prato"</b> e análise clínica potencializada por IA.
                   </p>
                   <button 
@@ -1595,7 +1595,7 @@ export default function App() {
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden">
                 {nutritionist.logoUrl ? <img src={nutritionist.logoUrl} alt="Logo" className="w-full h-full object-cover" /> : <Activity className="text-emerald-700" />}
             </div>
-            <h1 className="font-bold text-lg leading-tight">NUTRI+<br/><span className="text-emerald-400 text-xs font-normal">Pro System</span></h1>
+            <h1 className="font-bold text-lg leading-tight">Nutrimais<br/><span className="text-emerald-400 text-xs font-normal">Pro System</span></h1>
         </div>
         
         <nav className="space-y-2">
@@ -4482,7 +4482,7 @@ export default function App() {
                   <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
                       <Activity size={32} />
                   </div>
-                  <h1 className="text-3xl font-extrabold mb-1">NUTRI+</h1>
+                  <h1 className="text-3xl font-extrabold mb-1">Nutrimais</h1>
                   <p className="text-emerald-100 text-sm">Acesso ao Sistema</p>
               </div>
               <div className="p-8">

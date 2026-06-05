@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Auth helpers
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // NUTRITIONISTS
+    // Only the nutritionist can read/write their own profile
+    match /nutritionists/{nutritionistId} {
+      allow read: if isAuthenticated(); // patients may need to read public data
+      allow write: if isOwner(nutritionistId);
+    }
+    
+    // PATIENTS
+    // Nutritionists can manage all their patients. Patients can read/edit their own data.
+    match /patients/{patientId} {
+      // Assuming each patient document has a 'nutritionistId' field and 'uid' field
+      allow read: if isAuthenticated() && (request.auth.uid == resource.data.uid || request.auth.uid == resource.data.nutritionistId);
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.nutritionistId;
+      allow update: if isAuthenticated() && (request.auth.uid == resource.data.uid || request.auth.uid == resource.data.nutritionistId);
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.nutritionistId;
+      
+      // SUB-COLLECTIONS for patients (e.g., chat messages, histories)
+      match /messages/{messageId} {
+        allow read, write: if isAuthenticated() && (
+          request.auth.uid == get(/databases/$(database)/documents/patients/$(patientId)).data.uid ||
+          request.auth.uid == get(/databases/$(database)/documents/patients/$(patientId)).data.nutritionistId
+        );
+      }
+      match /history/{historyId} {
+        allow read: if isAuthenticated() && (
+          request.auth.uid == get(/databases/$(database)/documents/patients/$(patientId)).data.uid ||
+          request.auth.uid == get(/databases/$(database)/documents/patients/$(patientId)).data.nutritionistId
+        );
+        allow write: if isAuthenticated() && request.auth.uid == get(/databases/$(database)/documents/patients/$(patientId)).data.nutritionistId;
+      }
+    }
+
+    // APPOINTMENTS
+    match /appointments/{appointmentId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.nutritionistId || 
+        request.auth.uid == resource.data.patientUid
+      );
+      allow create: if isAuthenticated(); // Let newly booking patients create an appointment? (Wait, maybe just authenticated users)
+      allow update: if isAuthenticated() && (
+        request.auth.uid == resource.data.nutritionistId || 
+        request.auth.uid == resource.data.patientUid
+      );
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.nutritionistId;
+    }
+
+    // DIET MODELS
+    match /dietModels/{modelId} {
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.nutritionistId;
+      allow write: if isAuthenticated() && request.auth.uid == request.resource.data.nutritionistId;
+    }
+
+    // FOOD DATABASE (Custom foods added by nutritionist)
+    match /foods/{foodId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == request.resource.data.nutritionistId;
+    }
+  }
+}
